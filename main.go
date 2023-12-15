@@ -40,8 +40,13 @@ func init() {
 	}
 	setupLeftMatrix()
 	// Setup neopixels
-	leds := ws2812.New(machine.P0_03)
-	err = leds.WriteColors([]color.RGBA{{A: 0, G: 0, B: 0, R: 0}})
+	LED_OBJECT = ws2812.New(machine.P0_03)
+	setSingleColor(color.RGBA{
+		R: 0,
+		G: 0,
+		B: 0,
+		A: 0,
+	})
 	if err != nil {
 		println("could not update LEDs: ", err)
 		return
@@ -52,5 +57,8 @@ func main() {
 	for {
 		checkMatrixLeft(MATRIX_LEFT)
 		checkMatrixRight(MATRIX_RIGHT)
+		if LED_ACTIVE {
+			updateLeds()
+		}
 	}
 }
