@@ -1,6 +1,10 @@
 package main
 
 import (
+	"gomk/matrix"
+	"gomk/oled"
+	"gomk/rgb"
+
 	"image/color"
 	"machine"
 	"tinygo.org/x/drivers/ssd1306"
@@ -25,26 +29,23 @@ func init() {
 		println("could not configure ioexpander:", err)
 		return
 	}
-	oledDisplay := ssd1306.NewI2C(i2c)
-	oledDisplay.Configure(ssd1306.Config{
-		Width:    16,
-		Height:   128,
-		VccState: 0,
-		Address:  0,
-	})
+	oled.InitOLED(ssd1306.NewI2C(i2c))
+
 	// Setup Keyboard Matrices
-	MATRIX_RIGHT, err = generateRightMatrix(expander)
+	matrix.MATRIX_RIGHT, err = matrix.GenerateRightMatrix(expander)
 	if err != nil {
 		println("could not configure right matrix: ", err)
 		return
 	}
-	setupLeftMatrix()
+	matrix.SetupLeftMatrix()
 	// Setup neopixels
-	LED_OBJECT = ws2812.New(machine.P0_03)
-	setSingleColor(color.RGBA{
+	neopixel_led := machine.P1_12
+	neopixel_led.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	rgb.LED_OBJECT = ws2812.New(neopixel_led)
+	rgb.SetSingleColor(color.RGBA{
 		R: 0,
 		G: 0,
-		B: 0,
+		B: 255,
 		A: 0,
 	})
 	if err != nil {
@@ -55,10 +56,10 @@ func init() {
 
 func main() {
 	for {
-		checkMatrixLeft(MATRIX_LEFT)
-		checkMatrixRight(MATRIX_RIGHT)
-		if LED_ACTIVE {
-			updateLeds()
+		matrix.CheckMatrixLeft(matrix.MATRIX_LEFT)
+		matrix.CheckMatrixRight(matrix.MATRIX_RIGHT)
+		if rgb.LED_ACTIVE {
+			rgb.UpdateLeds()
 		}
 	}
 }

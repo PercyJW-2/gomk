@@ -1,4 +1,4 @@
-package main
+package matrix
 
 import (
 	"machine"
@@ -59,7 +59,7 @@ var MATRIX_RIGHT MatrixRight
 var MATRIX_LEFT_STATE [COLS_LEFT][ROWS_LEFT]bool
 var MATRIX_RIGHT_STATE [COLS_RIGHT][COLS_RIGHT]bool
 
-func generateRightMatrix(ioExpander *mcp23017.Device) (MatrixRight, error) {
+func GenerateRightMatrix(ioExpander *mcp23017.Device) (MatrixRight, error) {
 	outputs := [COLS_RIGHT]mcp23017.Pin{}
 	for i := range outputs {
 		outputs[i] = ioExpander.Pin(MATRIX_RIGHT_INTERMEDIATE.outputs[i])
@@ -82,7 +82,7 @@ func generateRightMatrix(ioExpander *mcp23017.Device) (MatrixRight, error) {
 	}, nil
 }
 
-func setupLeftMatrix() {
+func SetupLeftMatrix() {
 	for _, output := range MATRIX_LEFT.outputs {
 		output.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	}
@@ -91,7 +91,7 @@ func setupLeftMatrix() {
 	}
 }
 
-func checkMatrixLeft(left MatrixLeft) {
+func CheckMatrixLeft(left MatrixLeft) {
 	for i, output := range left.outputs {
 		output.High()
 		for j, input := range left.inputs {
@@ -105,7 +105,7 @@ func checkMatrixLeft(left MatrixLeft) {
 	}
 }
 
-func checkMatrixRight(right MatrixRight) {
+func CheckMatrixRight(right MatrixRight) {
 	for i, output := range right.outputs {
 		err := output.High()
 		if err != nil {

@@ -1,6 +1,8 @@
-package main
+package matrix
 
-import "machine/usb/hid/keyboard"
+import (
+	"machine/usb/hid/keyboard"
+)
 
 type Code uint8
 
